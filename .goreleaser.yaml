@@ -24,23 +24,9 @@ builds:
       - -X github.com/sipeed/picoclaw/pkg/config.GoVersion={{ .Env.GOVERSION }}
     goos:
       - linux
-      - windows
-      - darwin
-      - freebsd
-      - netbsd
     goarch:
-      - amd64
       - arm64
-      - riscv64
-      - loong64
-      - arm
-      - s390x
-      - mipsle
-    goarm:
-      - "6"
-      - "7"
-    gomips:
-      - softfloat
+    # other OS/arch entries removed; only linux/arm64 is produced
     main: ./cmd/picoclaw
     ignore:
       - goos: windows
@@ -62,26 +48,11 @@ builds:
       - -s -w
     goos:
       - linux
-      - windows
-      - darwin
-      - freebsd
     goarch:
-      - amd64
       - arm64
-      - riscv64
-      - loong64
-      - arm
-      - s390x
-      - mipsle
-    goarm:
-      - "6"
-      - "7"
-    gomips:
-      - softfloat
     main: ./web/backend
-    ignore:
-      - goos: windows
-        goarch: arm
+    # no windows ARM builds needed for arm64-only release
+
 
   - id: picoclaw-launcher-tui
     binary: picoclaw-launcher-tui
@@ -93,61 +64,13 @@ builds:
       - -s -w
     goos:
       - linux
-      - windows
-      - darwin
-      - freebsd
     goarch:
-      - amd64
       - arm64
-      - riscv64
-      - loong64
-      - arm
-      - s390x
-      - mipsle
-    goarm:
-      - "6"
-      - "7"
-    gomips:
-      - softfloat
     main: ./cmd/picoclaw-launcher-tui
-    ignore:
-      - goos: windows
-        goarch: arm
+    # windows ARM builds dropped
 
-dockers_v2:
-  - id: picoclaw
-    dockerfile: docker/Dockerfile.goreleaser
-    extra_files:
-      - docker/entrypoint.sh
-    ids:
-      - picoclaw
-    images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/picoclaw"
-      - 'docker.io/{{ .Env.DOCKERHUB_IMAGE_NAME }}'
-    tags:
-      - '{{ if isEnvSet "NIGHTLY_BUILD" }}nightly{{ else }}{{ .Tag }}{{ end }}'
-      - '{{ if isEnvSet "NIGHTLY_BUILD" }}nightly{{ else }}latest{{ end }}'
-    platforms:
-      - linux/amd64
-      - linux/arm64
-      - linux/riscv64
 
-  - id: picoclaw-launcher
-    dockerfile: docker/Dockerfile.goreleaser.launcher
-    ids:
-      - picoclaw
-      - picoclaw-launcher
-      - picoclaw-launcher-tui
-    images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/picoclaw"
-      - 'docker.io/{{ .Env.DOCKERHUB_IMAGE_NAME }}'
-    tags:
-      - '{{ if isEnvSet "NIGHTLY_BUILD" }}nightly-launcher{{ else }}{{ .Tag }}-launcher{{ end }}'
-      - '{{ if isEnvSet "NIGHTLY_BUILD" }}nightly-launcher{{ else }}launcher{{ end }}'
-    platforms:
-      - linux/amd64
-      - linux/arm64
-      - linux/riscv64
+# docker publishing disabled – only arm64 binaries are built
 
 notarize:
   macos:
